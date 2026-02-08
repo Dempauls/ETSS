@@ -137,7 +137,7 @@ public class Login extends javax.swing.JFrame {
     String sql = "SELECT * FROM tbl_users WHERE LOWER(TRIM(email))=? AND password=? AND LOWER(TRIM(status))=?";
 
     try {
-        // Authenticate user
+        
         boolean loginSuccess = conf.authenticate(sql, email.toLowerCase(), password, "active");
 
         if (!loginSuccess) {
@@ -145,7 +145,7 @@ public class Login extends javax.swing.JFrame {
             return;
         }
 
-        // Fetch user type to redirect
+      
         String typeSql = "SELECT type FROM tbl_users WHERE LOWER(TRIM(email))=? AND password=?";
            
         ResultSet rsType = conf.getUser(typeSql, email.toLowerCase(), password);
@@ -160,9 +160,9 @@ if (type.equalsIgnoreCase("Admin")) {
 }
 
 
-            this.dispose(); // close login form
+            this.dispose(); 
         } else {
-            // This should not happen if authenticate succeeded, but safe check
+            
             JOptionPane.showMessageDialog(this, "Error fetching user type.");
         }
 

@@ -82,7 +82,7 @@ public void displayData(String sql, javax.swing.JTable table) {
          PreparedStatement pstmt = conn.prepareStatement(sql);
          ResultSet rs = pstmt.executeQuery()) {
         
-        // This line automatically maps the Resultset to your JTable
+        
         table.setModel(DbUtils.resultSetToTableModel(rs));
         
     } catch (SQLException e) {
@@ -91,7 +91,7 @@ public void displayData(String sql, javax.swing.JTable table) {
 }
     public ResultSet getUser(String sql, Object... values) {
     try {
-        // Warning: This connection stays open until the ResultSet is closed manually elsewhere
+       
         Connection conn = connectDB(); 
         PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -115,7 +115,7 @@ private void loadUserProfile(String username) {
         ResultSet rs = conf.getUser(sql, username.toLowerCase());
 
         if (rs != null && rs.next()) {
-            // Example: display profile info in labels (you can add labels in initComponents)
+           
             String fullName = rs.getString("first_name") + " " + rs.getString("last_name");
            
         }
@@ -131,12 +131,7 @@ private void loadUserTasks(String username) {
         String sql = "SELECT id, task_name, due_date, status FROM tbl_tasks WHERE LOWER(TRIM(email))=?";
         ResultSet rs = conf.getUser(sql, email.toLowerCase());
 
-        // You’ll need to add a JTable in initComponents and fill it here
-        // Example:
-        // DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        // while(rs.next()) {
-        //     model.addRow(new Object[]{rs.getInt("id"), rs.getString("task_name"), rs.getString("due_date"), rs.getString("status")});
-        // }
+        
 
     } catch (Exception e) {
         e.printStackTrace();
@@ -144,7 +139,7 @@ private void loadUserTasks(String username) {
 }
 
     public PreparedStatement prepareStatement(String select__from_tbl_users_WHERE_username) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
 }
