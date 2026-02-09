@@ -12,15 +12,17 @@ public class userDashboard extends javax.swing.JFrame {
     /**
      * Creates new form userDashboard
      */
-    public userDashboard() {
-        initComponents();
-    }
+   
 
     public userDashboard(String email) {
         initComponents();
     this.loggedInUser = email;
        
     
+    }
+
+    private userDashboard() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -292,6 +294,7 @@ public class userDashboard extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new userDashboard().setVisible(true);
             }

@@ -2,6 +2,8 @@ package etss;
 
 import admin.adminDashboard;
 import admin.userDashboard;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 
@@ -134,43 +136,35 @@ public class Login extends javax.swing.JFrame {
     config conf = new config();
  
    
-    String sql = "SELECT * FROM tbl_users WHERE LOWER(TRIM(email))=? AND password=? AND LOWER(TRIM(status))=?";
-
-    try {
-        
-        boolean loginSuccess = conf.authenticate(sql, email.toLowerCase(), password, "active");
-
-        if (!loginSuccess) {
-            JOptionPane.showMessageDialog(this, "Invalid email or password");
-            return;
-        }
-
-      
-        String typeSql = "SELECT type FROM tbl_users WHERE LOWER(TRIM(email))=? AND password=?";
-           
-        ResultSet rsType = conf.getUser(typeSql, email.toLowerCase(), password);
-
-        if (rsType != null && rsType.next()) {
-           String type = rsType.getString("type").trim();
-if (type.equalsIgnoreCase("Admin")) {
-    new adminDashboard().setVisible(true);
-} else {
-    new userDashboard(email).setVisible(true);
-    this.dispose();
+    String sql = "SELECT type FROM tbl_users WHERE LOWER(TRIM(email))=? AND password=? AND LOWER(TRIM(status))=?";
+boolean loginSuccess = conf.authenticate(sql, email.toLowerCase(), password, "active");
+if (!loginSuccess) {
+    JOptionPane.showMessageDialog(this, "Invalid email, password, or inactive account");
+    return;
 }
 
+// To fetch the type, we need a separate query
+String typeSql = "SELECT type FROM tbl_users WHERE LOWER(TRIM(email))=? AND password=?";
+try (Connection conn = config.connectDB();
+     PreparedStatement pst = conn.prepareStatement(typeSql)) {
 
-            this.dispose(); 
-        } else {
-            
-            JOptionPane.showMessageDialog(this, "Error fetching user type.");
+    pst.setString(1, email.toLowerCase());
+    pst.setString(2, password);
+    try (ResultSet rs = pst.executeQuery()) {
+        if (rs.next()) {
+            String type = rs.getString("type").trim();
+            if (type.equalsIgnoreCase("Admin")) {
+                new adminDashboard().setVisible(true);
+            } else {
+                new userDashboard(email).setVisible(true);
+            }
+            this.dispose();
         }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-        e.printStackTrace();
     }
-
+} catch (Exception e) {
+    JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    e.printStackTrace();
+}
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked

@@ -1,6 +1,5 @@
 package admin;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.String;
 import etss.config;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -9,7 +8,6 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import javafx.animation.Animation.Status;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -21,17 +19,23 @@ import javax.swing.JOptionPane;
  */
 public class userPro extends javax.swing.JFrame {
 
+    private String userEmail;
+
     /**
      * Creates new form userPro
      */
     public userPro(String email) {
     initComponents();
-    try (Connection con = config.connectDB()) {
-        String sql = "SELECT first_name, last_name, email, type, status FROM tbl_users WHERE LOWER(TRIM(email)) = LOWER(TRIM(?))";
-        java.sql.PreparedStatement ps = con.prepareStatement(sql);
-        
-        ps.setString(1, email);
-        java.sql.ResultSet rs = ps.executeQuery();
+
+    String sql = "SELECT first_name, last_name, email, type, status, idpicture "
+               + "FROM tbl_users WHERE LOWER(TRIM(email)) = LOWER(TRIM(?))";
+
+    try (Connection con = config.connectDB();
+     PreparedStatement ps = con.prepareStatement(sql)) {
+
+    ps.setString(1, email.trim());
+
+    try (ResultSet rs = ps.executeQuery()) {
 
         if (rs.next()) {
             txtFirstname.setText(rs.getString("first_name"));
@@ -39,17 +43,28 @@ public class userPro extends javax.swing.JFrame {
             txtEmail.setText(rs.getString("email"));
             txtUsertype.setText(rs.getString("type"));
             txtStatus.setText(rs.getString("status"));
+
+            // ✅ LOAD IMAGE FROM DB
+            byte[] imgBytes = rs.getBytes("idpicture");
+            if (imgBytes != null && imgBytes.length > 0) {
+                ImageIcon icon = new ImageIcon(imgBytes);
+                Image img = icon.getImage()
+                        .getScaledInstance(163, 137, Image.SCALE_SMOOTH);
+                lbl_photo.setIcon(new ImageIcon(img));
+            } else {
+                lbl_photo.setIcon(null); // no image saved yet
+            }
+
         } else {
-            JOptionPane.showMessageDialog(this, "User not found in database!");
+            JOptionPane.showMessageDialog(this, "User not found!");
         }
-
-
-        rs.close();
-        ps.close();
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Error loading user profile: " + e.getMessage());
     }
+
+} catch (Exception e) {
+    e.printStackTrace();
+    JOptionPane.showMessageDialog(this,
+            "Error loading profile: " + e.getMessage());
+}
     }
 
     
@@ -82,6 +97,7 @@ public class userPro extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         jPanel1.setBackground(new java.awt.Color(19, 30, 70));
         jPanel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -95,6 +111,11 @@ public class userPro extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Cambria", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 204, 102));
         jButton1.setText("Save");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -142,7 +163,7 @@ public class userPro extends javax.swing.JFrame {
         });
 
         lbl_photo.setForeground(new java.awt.Color(0, 51, 102));
-        lbl_photo.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lbl_photo.setBorder(javax.swing.BorderFactory.createMatteBorder(2, 1, 2, 1, new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -159,15 +180,8 @@ public class userPro extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jButton1)
-                                .addGap(46, 46, 46)
-                                .addComponent(jButton2)
-                                .addGap(42, 42, 42)
-                                .addComponent(jButton3)))
-                        .addContainerGap(115, Short.MAX_VALUE))
+                        .addComponent(jLabel1)
+                        .addContainerGap(142, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtStatus, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -177,7 +191,14 @@ public class userPro extends javax.swing.JFrame {
                             .addComponent(txtEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(10, 10, 10)
                         .addComponent(lbl_photo, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(23, 23, 23))))
+                        .addGap(23, 23, 23))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addGap(46, 46, 46)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -241,24 +262,20 @@ public class userPro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        this.dispose();
+         this.dispose();
+new userDashboard(userEmail).setVisible(true);
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      String email = txtEmail.getText();
+      String email = txtEmail.getText().trim();
     String fname = txtFirstname.getText();
     String lname = txtLastname.getText();
 
-   
     String sql = "UPDATE tbl_users SET first_name = ?, last_name = ? WHERE email = ?";
 
-    
-    config conf = new config();
-    
     try {
-        
-        conf.addRecord(sql, fname, lname, email);
-        
+        new config().executeUpdate(sql, fname, lname, email);
         JOptionPane.showMessageDialog(this, "Saved Successfully!");
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Save Error: " + e.getMessage());
@@ -267,54 +284,65 @@ public class userPro extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
          JFileChooser chooser = new JFileChooser();
-    chooser.setDialogTitle("Select Image");
-    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+
         File file = chooser.getSelectedFile();
 
         try {
             BufferedImage bi = ImageIO.read(file);
-
             if (bi == null) {
                 JOptionPane.showMessageDialog(this, "Invalid image file!");
                 return;
             }
 
-           
-            Image img = bi.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            // Preview
+            Image img = bi.getScaledInstance(163, 137, Image.SCALE_SMOOTH);
             lbl_photo.setIcon(new ImageIcon(img));
 
-          
+            // Convert to bytes
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(bi, "png", baos);
             byte[] imageBytes = baos.toByteArray();
 
-            System.out.println("Image bytes length: " + imageBytes.length);
-            System.out.println("Saving for email: " + txtEmail.getText());
-
-           
-            Connection conn = config.connectDB();
             String sql = "UPDATE tbl_users SET idpicture = ? WHERE email = ?";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setBytes(1, imageBytes);
-            pst.setString(2, txtEmail.getText().trim());
 
-            int updated = pst.executeUpdate();
+            try (Connection conn = config.connectDB();
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            if (updated > 0) {
-                JOptionPane.showMessageDialog(this, "Image saved to database!");
-            } else {
-                JOptionPane.showMessageDialog(this,
-                    "NO ROW UPDATED ❌\nCheck email match.");
+                ps.setBytes(1, imageBytes);
+                ps.setString(2, txtEmail.getText().trim());
+
+                int updated = ps.executeUpdate();
+
+                if (updated > 0) {
+                    JOptionPane.showMessageDialog(this, "Image saved permanently!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "No user updated ❌");
+                }
             }
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+       String email = txtEmail.getText().trim();
+    String fname = txtFirstname.getText();
+    String lname = txtLastname.getText();
+
+    String sql = "UPDATE tbl_users SET first_name = ?, last_name = ? WHERE email = ?";
+
+    try {
+        new config().executeUpdate(sql, fname, lname, email);
+        JOptionPane.showMessageDialog(this, "Saved Successfully!");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Save Error: " + e.getMessage());
+    }
+    }//GEN-LAST:event_jButton1MouseClicked
 
     /**
      * @param args the command line arguments
