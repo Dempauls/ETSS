@@ -3,6 +3,7 @@ package admin;
 
 import etss.Landing;
 import etss.Login;
+import etss.config;
 import java.awt.Color;
 import javax.swing.JPanel;
 
@@ -289,8 +290,14 @@ public class adminDashboard extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
         public void run() {
+            if (config.Session.id == 0){
+                new Login().setVisible(true);
+                
+            }else{
+
             new adminDashboard().setVisible(true);
             }
+        }
         });
     }
 
