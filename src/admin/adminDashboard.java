@@ -17,15 +17,15 @@ public class adminDashboard extends javax.swing.JFrame {
     etss.Session sess = etss.Session.getInstance();
     
     if (sess.getUid() == null) {
-        this.setVisible(false); // Hide
-        
-        
+       
         javax.swing.JOptionPane.showMessageDialog(null, "Please Login First!", "Security Warning", javax.swing.JOptionPane.ERROR_MESSAGE);
         
-        
         new Login().setVisible(true);
-        this.dispose();
+        
+        this.dispose(); 
+        return; 
     }
+    initComponents();
 }
 
     
@@ -289,16 +289,22 @@ public class adminDashboard extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-        public void run() {
-            if (config.Session.id == 0){
-                new Login().setVisible(true);
-                
-            }else{
-
-            new adminDashboard().setVisible(true);
-            }
+       public void run() {
+        
+       etss.Session sess = etss.Session.getInstance();
+    
+    if (sess.getUid() == null) {
+        
+        javax.swing.JOptionPane.showMessageDialog(null, "Please Login First!", "Security Warning", javax.swing.JOptionPane.ERROR_MESSAGE);
+        
+        
+        new Login().setVisible(true);
+    } else {
+        
+        new adminDashboard().setVisible(true);
         }
-        });
+    }
+});
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

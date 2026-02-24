@@ -2,11 +2,12 @@ package etss;
 
 public class Session {
     private static Session instance;
-    private String uid;
+    public String uid;
     private String email;
 
     private Session() {}
 
+    public static int id = 0;
     public static Session getInstance() {
         if (instance == null) {
             instance = new Session();

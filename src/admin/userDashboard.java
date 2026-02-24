@@ -22,11 +22,13 @@ public class userDashboard extends javax.swing.JFrame {
    
     private void checkSession() {
         etss.Session sess = etss.Session.getInstance();
-        if (sess.getUid() == null) {
-            this.setVisible(false);
-            javax.swing.JOptionPane.showMessageDialog(null, "Please Login First!", "Security Warning", javax.swing.JOptionPane.ERROR_MESSAGE);
-            new Login().setVisible(true);
-            this.dispose();
+    if (sess.getUid() == null) {
+        this.setVisible(false); 
+        javax.swing.JOptionPane.showMessageDialog(null, "Please Login First!", "Security Warning", javax.swing.JOptionPane.ERROR_MESSAGE);
+        
+        new Login().setVisible(true); 
+        
+        this.dispose();
     }
 
     }
@@ -318,7 +320,7 @@ public class userDashboard extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new userDashboard().setVisible(true);
+                new userDashboard().setVisible(false);
             }
         });
     }
