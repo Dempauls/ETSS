@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 
 
 public class Login extends javax.swing.JFrame {
-    public String sess_id; // Make sure this exists!
+    public String sess_id;
 
    
     public Login() {
@@ -144,19 +144,26 @@ try (Connection conn = config.connectDB();
     pst.setString(2, password);
     
     try (ResultSet rs = pst.executeQuery()) {
-        if (rs.next()) {
-            String id = rs.getString("id"); 
-            String type = rs.getString("type").trim();
-            
-            if (type.equalsIgnoreCase("Admin")) {
-                new adminDashboard().setVisible(true);
-            } else {
-                
-                userDashboard ud = new userDashboard(email);
-                ud.sess_id = id; 
-                ud.setVisible(true);
-            }
-            this.dispose();
+       if (rs.next()) {
+    
+    String id = rs.getString("id"); 
+    String type = rs.getString("type").trim();
+    
+    etss.Session sess = etss.Session.getInstance();
+    sess.setUid(id);
+    sess.setEmail(email);
+   
+    if (type.equalsIgnoreCase("Admin")) {
+        adminDashboard ad = new adminDashboard();
+        ad.setVisible(true);
+    } else {
+        
+        userDashboard ud = new userDashboard(email);
+        ud.sess_id = id; 
+        ud.setVisible(true);
+    }
+    
+    this.dispose();
         }
     }
 } catch (Exception e) {

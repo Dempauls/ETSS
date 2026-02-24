@@ -11,8 +11,21 @@ public class adminDashboard extends javax.swing.JFrame {
 
    
     public adminDashboard() {
-        initComponents();
+      initComponents();
+    
+    etss.Session sess = etss.Session.getInstance();
+    
+    if (sess.getUid() == null) {
+        this.setVisible(false); 
+        
+        
+        javax.swing.JOptionPane.showMessageDialog(null, "Please Login First!", "Security Warning", javax.swing.JOptionPane.ERROR_MESSAGE);
+        
+        
+        new Login().setVisible(true);
+        this.dispose();
     }
+}
 
     
     @SuppressWarnings("unchecked")
@@ -29,6 +42,14 @@ public class adminDashboard extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowIconified(java.awt.event.WindowEvent evt) {
+                formWindowIconified(evt);
+            }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(19, 30, 70));
         jPanel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -159,10 +180,17 @@ public class adminDashboard extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
-     Login log = new Login();
-    log.setLocationRelativeTo(null);
-    log.setVisible(true);
-    this.dispose();
+    int confirm = javax.swing.JOptionPane.showConfirmDialog(null, "Are you sure you want to logout?", "Logout Confirmation", javax.swing.JOptionPane.YES_NO_OPTION);
+    
+    if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+        
+        etss.Session.getInstance().setUid(null); 
+        
+        
+        Login log = new Login();
+        log.setVisible(true);
+        this.dispose();
+    }
     }//GEN-LAST:event_jLabel9MouseClicked
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
@@ -223,6 +251,14 @@ public class adminDashboard extends javax.swing.JFrame {
         jLabel4.setBackground(new java.awt.Color(19,30,70));
     }//GEN-LAST:event_jLabel4MouseExited
 
+    private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowIconified
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        
+    }//GEN-LAST:event_formWindowOpened
+    
     /**
      * @param args the command line arguments
      */
@@ -252,8 +288,8 @@ public class adminDashboard extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new adminDashboard().setVisible(true);
+        public void run() {
+            new adminDashboard().setVisible(true);
             }
         });
     }
