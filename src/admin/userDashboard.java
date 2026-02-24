@@ -10,15 +10,26 @@ public class userDashboard extends javax.swing.JFrame {
     public userDashboard(String email) {
         initComponents();
         this.loggedInUser = email;
-       
-    
+        checkSession();
+        
     }
 
-    userDashboard() {
+   public userDashboard() {
         initComponents();
+        checkSession(); 
     }
 
-    
+   
+    private void checkSession() {
+        etss.Session sess = etss.Session.getInstance();
+        if (sess.getUid() == null) {
+            this.setVisible(false);
+            javax.swing.JOptionPane.showMessageDialog(null, "Please Login First!", "Security Warning", javax.swing.JOptionPane.ERROR_MESSAGE);
+            new Login().setVisible(true);
+            this.dispose();
+    }
+
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

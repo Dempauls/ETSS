@@ -16,7 +16,7 @@ public class adminDashboard extends javax.swing.JFrame {
     etss.Session sess = etss.Session.getInstance();
     
     if (sess.getUid() == null) {
-        this.setVisible(false); 
+        this.setVisible(false); // Hide
         
         
         javax.swing.JOptionPane.showMessageDialog(null, "Please Login First!", "Security Warning", javax.swing.JOptionPane.ERROR_MESSAGE);
