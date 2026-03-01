@@ -3,11 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/GUI_etss/src/etss/config.java</file>
-            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/GUI_etss/src/admin/userPro.java</file>
-            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/GUI_etss/src/etss/Landing.java</file>
-            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/GUI_etss/src/admin/userDashboard.java</file>
-            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/GUI_etss/src/etss/Login.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/etss/Landing.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/admin/taskCrud.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/admin/userPro.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/admin/taskHistory.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/admin/adminDashboard.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/etss/Login.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/etss/Register.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/admin/crudForm.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/admin/editPro.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/admin/myTasks.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/admin/usersForm.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/admin/userDashboard.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/ETSS/src/admin/taskForm.java</file>
         </group>
     </open-files>
 </project-private>

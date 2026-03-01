@@ -45,7 +45,7 @@ public class Register extends javax.swing.JFrame {
         jLabel6.setText("Confirm Pass:");
 
         jButton1.setBackground(new java.awt.Color(0, 51, 102));
-        jButton1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jButton1.setFont(new java.awt.Font("Cambria", 1, 12)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 204, 51));
         jButton1.setText("Register");
         jButton1.addActionListener(new java.awt.event.ActionListener() {

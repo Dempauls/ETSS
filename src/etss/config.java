@@ -120,14 +120,15 @@ public class config {
     }
         public void displayMyTasks(String userId) {
   config conf = new config();
-        // This query uses the ID to filter tasks
+       
         String sql = "SELECT t_id AS 'ID', t_title AS 'Task Title', t_deadline AS 'Deadline', t_status AS 'Status' "
                    + "FROM tbl_tasks WHERE assigned_to = '" + userId + "' AND t_status != 'Completed'";
         JTable myTasksTable = null;
         
-        // Ensure 'myTasksTable' matches the variable name of your JTable
+        
         conf.displayData(sql, myTasksTable);
 }
+        
 }
 
         
