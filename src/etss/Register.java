@@ -45,7 +45,7 @@ public class Register extends javax.swing.JFrame {
         jLabel6.setText("Confirm Pass:");
 
         jButton1.setBackground(new java.awt.Color(0, 51, 102));
-        jButton1.setFont(new java.awt.Font("Cambria", 1, 12)); // NOI18N
+        jButton1.setFont(new java.awt.Font("Cambria", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 204, 51));
         jButton1.setText("Register");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -78,7 +78,7 @@ public class Register extends javax.swing.JFrame {
             }
         });
 
-        jLabel7.setFont(new java.awt.Font("Cambria", 1, 12)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Cambria", 1, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 51, 102));
         jLabel7.setText("Already have an account? Login");
         jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -149,9 +149,9 @@ public class Register extends javax.swing.JFrame {
                         .addGap(294, 294, 294)
                         .addComponent(jButton1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(249, 249, 249)
+                        .addGap(235, 235, 235)
                         .addComponent(jLabel7)))
-                .addContainerGap(269, Short.MAX_VALUE))
+                .addContainerGap(256, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

@@ -34,7 +34,6 @@ public class Login extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
 
-        jLabel4.setIcon(new javax.swing.ImageIcon("C:\\Users\\Administrator\\Downloads\\reg.jpg")); // NOI18N
         jLabel4.setText("jLabel4");
 
         jScrollPane1.setViewportView(jTextPane1);
@@ -86,7 +85,7 @@ public class Login extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 560, -1));
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 550, -1));
 
         jButton1.setBackground(new java.awt.Color(0, 51, 102));
         jButton1.setFont(new java.awt.Font("Cambria", 1, 14)); // NOI18N
@@ -135,7 +134,7 @@ if (!loginSuccess) {
     return;
 }
 
-String typeSql = "SELECT id, type FROM tbl_users WHERE LOWER(TRIM(email))=? AND password=?";
+String typeSql = "SELECT id, type, first_name, last_name FROM tbl_users WHERE LOWER(TRIM(email))=? AND password=?";
 
 try (Connection conn = config.connectDB();
      PreparedStatement pst = conn.prepareStatement(typeSql)) {
@@ -144,26 +143,32 @@ try (Connection conn = config.connectDB();
     pst.setString(2, password);
     
     try (ResultSet rs = pst.executeQuery()) {
-       if (rs.next()) {
-    
-    String id = rs.getString("id"); 
-    String type = rs.getString("type").trim();
-    
-    etss.Session sess = etss.Session.getInstance();
-    sess.setUid(id);
-    sess.setEmail(email);
-   
-    if (type.equalsIgnoreCase("Admin")) {
-        adminDashboard ad = new adminDashboard();
-        ad.setVisible(true);
-    } else {
-        
-        userDashboard ud = new userDashboard(email);
-        ud.sess_id = id; 
-        ud.setVisible(true);
-    }
-    
-    this.dispose();
+        if (rs.next()) {
+            String id = rs.getString("id"); 
+            String type = rs.getString("type").trim();
+            
+            
+            String firstName = rs.getString("first_name");
+            String lastName = rs.getString("last_name");
+            
+            
+            etss.Session sess = etss.Session.getInstance();
+            sess.setUid(id);
+            sess.setEmail(email);
+            sess.setFname(firstName);
+            sess.setLname(lastName);  
+           
+            if (type.equalsIgnoreCase("Admin")) {
+                adminDashboard ad = new adminDashboard();
+                ad.setVisible(true);
+            } else {
+                userDashboard ud = new userDashboard(email);
+                
+                ud.sess_id = firstName + " " + lastName; 
+                ud.setVisible(true);
+            }
+            
+            this.dispose();
         }
     }
 } catch (Exception e) {

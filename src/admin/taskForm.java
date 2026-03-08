@@ -34,6 +34,7 @@ public class taskForm extends javax.swing.JFrame {
         search_bar = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -125,7 +126,7 @@ public class taskForm extends javax.swing.JFrame {
                         .addComponent(search_bar, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4)))
-                .addGap(0, 23, Short.MAX_VALUE))
+                .addGap(0, 15, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -147,30 +148,45 @@ public class taskForm extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("TASK MANAGEMENT");
 
+        jButton5.setBackground(new java.awt.Color(255, 204, 102));
+        jButton5.setFont(new java.awt.Font("Cambria", 1, 14)); // NOI18N
+        jButton5.setForeground(new java.awt.Color(0, 51, 102));
+        jButton5.setText("Generate Certificate");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(276, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(255, 255, 255))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(257, 257, 257)
+                        .addComponent(jLabel1)
+                        .addGap(89, 89, 89)
+                        .addComponent(jButton5))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
+                .addGap(10, 10, 10)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton5)
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 870, 490));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 870, 480));
 
         pack();
         setLocationRelativeTo(null);
@@ -262,6 +278,59 @@ public class taskForm extends javax.swing.JFrame {
     this.dispose();
     }//GEN-LAST:event_jButton4MouseClicked
 
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    int row = tasksTable.getSelectedRow();
+    if (row == -1) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Select a task first!");
+        return;
+    }
+
+    
+    String name = tasksTable.getValueAt(row, 5).toString();
+    String task = tasksTable.getValueAt(row, 1).toString();
+    String date = tasksTable.getValueAt(row, 4).toString();
+
+    String userHome = System.getProperty("user.home");
+    String htmlPath = userHome + "\\Desktop\\temp_cert.html";
+    String pdfPath = userHome + "\\Desktop\\Certificate_" + name.replace(" ", "_") + ".pdf";
+
+   
+    String htmlContent = "<html><head><style>"
+            + "@page { size: landscape; margin: 0; }" 
+            + "body { font-family: 'Cambria', serif; text-align: center; background-color: #f4f4f4; padding: 50px; }"
+            + ".border { border: 15px double #1a237e; padding: 40px; background-color: white; height: 80%; }"
+            + "h1 { color: #1a237e; font-size: 60px; margin-bottom: 10px; }"
+            + "h2 { font-weight: normal; font-size: 25px; margin-top: 0; }"
+            + ".name { color: #b8860b; font-size: 50px; font-weight: bold; margin: 20px 0; }"
+            + ".details { font-size: 22px; }"
+            + "</style></head><body>"
+            + "<div class='border'>"
+            + "<h1>CERTIFICATE</h1>"
+            + "<h2>OF COMPLETION</h2>"
+            + "<p class='details'>This is to officially certify that</p>"
+            + "<div class='name'>" + name.toUpperCase() + "</div>"
+            + "<p class='details'>has successfully finished the task</p>"
+            + "<h3 style='font-size: 28px;'>" + task + "</h3>"
+            + "<p class='details'>Completed on: " + date + "</p>"
+            + "<br><br><p>__________________________<br>Admin Authorized Signature</p>"
+            + "</div></body></html>";
+
+    try {
+       
+        java.io.FileWriter fw = new java.io.FileWriter(htmlPath);
+        fw.write(htmlContent);
+        fw.close();
+
+        String command = "cmd /c start chrome --headless --disable-gpu --print-to-pdf=\"" + pdfPath + "\" \"" + htmlPath + "\"";
+        Runtime.getRuntime().exec(command);
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Certificate generated on your Desktop!");
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
+    }//GEN-LAST:event_jButton5ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -302,6 +371,7 @@ public class taskForm extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
