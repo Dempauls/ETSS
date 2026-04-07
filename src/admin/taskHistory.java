@@ -1,4 +1,3 @@
-
 package admin;
 
 import etss.config;
@@ -8,17 +7,27 @@ import javax.swing.JTable;
 public class taskHistory extends javax.swing.JFrame {
 public String sess_id;
 public void displayHistory() {
-        try {       
-             config con = new config();
-     
-            String sql = "SELECT id AS 'ID', title AS 'Task Name', deadline AS 'Finished On' "
-                       + "FROM tbl_tasks WHERE assigned_to = '" + sess_id + "' AND status = 'Completed'";
-            con.displayData(sql, historyTable);
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+    if (sess_id == null || sess_id.trim().isEmpty()) return;
+
+    try {       
+        config con = new config();
+        // Uses the JOIN and filters for 'Completed'
+        String sql = "SELECT t.id AS 'ID', t.title AS 'Task Name', t.deadline AS 'Finished On' "
+                   + "FROM tbl_tasks t "
+                   + "JOIN tbl_task_assignment ta ON t.id = ta.task_id "
+                   + "WHERE ta.user_id = '" + sess_id + "' AND t.status = 'Completed'";
+        
+        con.displayData(sql, historyTable);
+    } catch (Exception e) {
+        System.out.println("Error: " + e.getMessage());
     }
-   
+}
+   public void setVisible(boolean b) {
+    super.setVisible(b);
+    if (b) {
+        displayHistory(); 
+    }
+}
     public taskHistory() {
         initComponents();
         
@@ -169,18 +178,17 @@ public void displayHistory() {
     }//GEN-LAST:event_search_barActionPerformed
 
     private void search_barKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search_barKeyReleased
-        config con = new config();
+       config con = new config();
     String query = search_bar.getText();
-    
-   
-    String sql = "SELECT * FROM tbl_tasks WHERE id LIKE '%" + query + "%' "
-               + "OR title LIKE '%" + query + "%' "
-               + "OR desc LIKE '%" + query + "%' "
-             + "OR status LIKE '%" + query + "%' "
-               + "OR deadline LIKE '%" + query + "%'";
-        JTable tasksTable = null;
+
+    String sql = "SELECT t.id, t.title, t.deadline "
+               + "FROM tbl_tasks t "
+               + "JOIN tbl_task_assignment ta ON t.id = ta.task_id "
+               + "WHERE ta.user_id = '" + sess_id + "' AND t.status = 'Completed' AND ("
+               + "t.title LIKE '%" + query + "%' OR "
+               + "t.id LIKE '%" + query + "%')";
                
-    con.displayData(sql, tasksTable);
+    con.displayData(sql, historyTable);
     }//GEN-LAST:event_search_barKeyReleased
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked

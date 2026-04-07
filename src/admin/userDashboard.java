@@ -218,11 +218,10 @@ public class userDashboard extends javax.swing.JFrame {
         return;
     }
 
-    myTasks mt = new myTasks();
-    mt.sess_id = this.sess_id; 
-    mt.setVisible(true);
-    mt.displayMyTasks(); 
-    this.dispose();
+   myTasks mt = new myTasks();
+mt.sess_id = this.sess_id; 
+mt.setVisible(true);
+this.dispose();
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked

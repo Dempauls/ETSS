@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import static java.text.Collator.PRIMARY;
 import javax.swing.JTable;
 import net.proteanit.sql.DbUtils;
@@ -13,10 +14,21 @@ import net.proteanit.sql.DbUtils;
 public class config {
 
     private static final String DB_URL = "jdbc:sqlite:etss.db";
+    private Connection connect;
+    
+    public config() {
+        try {
+            
+            this.connect = DriverManager.getConnection(DB_URL);
+        } catch (SQLException ex) {
+            System.out.println("Connection Error: " + ex.getMessage());
+        }
+    }
 
     public static Connection connectDB() throws SQLException {
         return DriverManager.getConnection(DB_URL);
     }
+  
 
     
     public static void initDatabase() {
@@ -128,10 +140,44 @@ public class config {
         
         conf.displayData(sql, myTasksTable);
 }
-   
-        
-}
 
+    public int insertDataWithID(String sqlTask) { 
+   int id = -1;
+    
+    try (Connection conn = connectDB();
+         PreparedStatement pst = conn.prepareStatement(sqlTask, Statement.RETURN_GENERATED_KEYS)) {
+        
+        pst.executeUpdate();
+        try (ResultSet rs = pst.getGeneratedKeys()) {
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+        }
+        System.out.println("Inserted with ID: " + id);
+    } catch (SQLException ex) {
+        System.out.println("SQL Error in insertDataWithID: " + ex.getMessage());
+    }
+    return id;
+}
+    public void logEvent(String userId, String action, String details) {
+    try {
+        java.sql.Connection conn = connectDB();
+       
+        String sql = "INSERT INTO tbl_logs (l_user_id, l_action, l_details) VALUES (?, ?, ?)";
+        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+        
+        pst.setString(1, userId);  
+        pst.setString(2, action);   
+        pst.setString(3, details); 
+        
+        pst.executeUpdate();
+        pst.close();
+        conn.close();
+    } catch (java.sql.SQLException e) {
+        System.out.println("Logging Error: " + e.getMessage());
+    }
+}
+}
         
    
 

@@ -1,4 +1,3 @@
-
 package admin;
 
 import etss.config;
@@ -10,21 +9,29 @@ public class myTasks extends javax.swing.JFrame {
 
     public void displayMyTasks() {
        
-        if (sess_id == null) return;
+       if (sess_id == null || sess_id.trim().isEmpty()) {
+        System.out.println("Error: No User ID found in session.");
+        return;
+    }
 
-        try {
-            config conf = new config();
-            
-            
-            String sql = "SELECT id AS 'ID', title AS 'Task Title', `desc` AS 'Description', "
-                       + "status AS 'Status', deadline AS 'Deadline' "
-                       + "FROM tbl_tasks WHERE assigned_to = '" + sess_id + "'";
-            
-            System.out.println("Fetching tasks for User: " + sess_id); 
-            conf.displayData(sql, myTasksTable);
-            
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+    try {
+        config conf = new config();
+        
+        
+        String sql = "SELECT t.id AS 'ID', t.title AS 'Task Title', "
+                   + "t.desc AS 'Description', t.status AS 'Status', "
+                   + "t.deadline AS 'Deadline' "
+                   + "FROM tbl_tasks t "
+                   + "JOIN tbl_task_assignment ta ON t.id = ta.task_id "
+                   + "WHERE ta.user_id = '" + sess_id + "'";
+        
+       
+        System.out.println("Loading tasks for User ID: " + sess_id); 
+        
+        conf.displayData(sql, myTasksTable);
+        
+    } catch (Exception e) {
+        System.out.println("Query Error: " + e.getMessage());
         }
     }
 
@@ -210,14 +217,17 @@ public class myTasks extends javax.swing.JFrame {
     String query = search_bar.getText();
     
    
-    String sql = "SELECT * FROM tbl_tasks WHERE id LIKE '%" + query + "%' "
-               + "OR title LIKE '%" + query + "%' "
-               + "OR desc LIKE '%" + query + "%' "
-             + "OR status LIKE '%" + query + "%' "
-               + "OR deadline LIKE '%" + query + "%'";
-        JTable tasksTable = null;
+    String sql = "SELECT t.id, t.title, t.desc, t.status, t.deadline "
+               + "FROM tbl_tasks t "
+               + "JOIN tbl_task_assignment ta ON t.id = ta.task_id "
+               + "WHERE ta.user_id = '" + sess_id + "' AND ("
+               + "t.title LIKE '%" + query + "%' OR "
+               + "t.desc LIKE '%" + query + "%' OR "
+               + "t.status LIKE '%" + query + "%' OR "
+               + "t.deadline LIKE '%" + query + "%')";
                
-    con.displayData(sql, tasksTable);
+    
+    con.displayData(sql, myTasksTable);
     }//GEN-LAST:event_search_barKeyReleased
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

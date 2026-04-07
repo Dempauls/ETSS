@@ -79,7 +79,7 @@ public class adminDashboard extends javax.swing.JFrame {
 
         jLabel5.setFont(new java.awt.Font("Cambria", 1, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("                                 HOME");
+        jLabel5.setText("                                   LOGS");
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel5MouseClicked(evt);
@@ -190,8 +190,12 @@ public class adminDashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel9MouseClicked
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
-         Landing lp = new Landing(); 
-    lp.setVisible(true);
+        logs lf = new logs(); 
+    
+    lf.setVisible(true); 
+    
+    lf.setLocationRelativeTo(null); 
+   
     this.dispose();
     }//GEN-LAST:event_jLabel5MouseClicked
 

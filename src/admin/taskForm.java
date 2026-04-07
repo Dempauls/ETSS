@@ -1,4 +1,3 @@
-
 package admin;
 
 import etss.config;
@@ -14,8 +13,18 @@ public class taskForm extends javax.swing.JFrame {
         getUserData();
     }
     void getUserData(){
-        config con = new config();
-        String sql = "SELECT * FROM tbl_tasks ";
+      config con = new config();
+        
+      
+        String sql = "SELECT t.id AS 'ID', "
+                   + "t.title AS 'Task Title', "
+                   + "t.desc AS 'Description', "
+                   + "t.status AS 'Status', "
+                   + "t.deadline AS 'Deadline', "
+                   + "ta.user_id AS 'Assigned ID' " 
+                   + "FROM tbl_tasks t "
+                   + "LEFT JOIN tbl_task_assignment ta ON t.id = ta.task_id";
+        
         con.displayData(sql, tasksTable);
     }
 
@@ -257,13 +266,17 @@ public class taskForm extends javax.swing.JFrame {
     private void search_barKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search_barKeyReleased
         config con = new config();
     String query = search_bar.getText();
-    
+
    
-    String sql = "SELECT * FROM tbl_tasks WHERE id LIKE '%" + query + "%' "
-               + "OR title LIKE '%" + query + "%' "
-               + "OR desc LIKE '%" + query + "%' "
-             + "OR status LIKE '%" + query + "%' "
-               + "OR deadline LIKE '%" + query + "%'";
+    String sql = "SELECT t.id AS 'ID', t.title AS 'Task Title', t.desc AS 'Description', "
+               + "t.status AS 'Status', t.deadline AS 'Deadline', "
+               + "ta.user_id AS 'Assigned ID' " 
+               + "FROM tbl_tasks t "
+               + "LEFT JOIN tbl_task_assignment ta ON t.id = ta.task_id "
+               + "WHERE t.id LIKE '%" + query + "%' "
+               + "OR t.title LIKE '%" + query + "%' "
+               + "OR t.status LIKE '%" + query + "%' "
+               + "OR ta.user_id LIKE '%" + query + "%'"; 
                
     con.displayData(sql, tasksTable);
     }//GEN-LAST:event_search_barKeyReleased
@@ -286,45 +299,88 @@ public class taskForm extends javax.swing.JFrame {
     }
 
     
-    String name = tasksTable.getValueAt(row, 5).toString();
     String task = tasksTable.getValueAt(row, 1).toString();
     String date = tasksTable.getValueAt(row, 4).toString();
+    Object nameObj = tasksTable.getValueAt(row, 5);
+    String name = (nameObj != null) ? nameObj.toString() : "Unassigned";
+
+    if (name.equals("Unassigned")) {
+        javax.swing.JOptionPane.showMessageDialog(this, "This task has no assignee!");
+        return;
+    }
 
     String userHome = System.getProperty("user.home");
+    String pdfPath = userHome + "\\Desktop\\Award_" + name.replace(" ", "_") + ".pdf";
     String htmlPath = userHome + "\\Desktop\\temp_cert.html";
-    String pdfPath = userHome + "\\Desktop\\Certificate_" + name.replace(" ", "_") + ".pdf";
 
-   
+    
     String htmlContent = "<html><head><style>"
             + "@page { size: landscape; margin: 0; }" 
             + "body { font-family: 'Cambria', serif; text-align: center; background-color: #f4f4f4; padding: 50px; }"
-            + ".border { border: 15px double #1a237e; padding: 40px; background-color: white; height: 80%; }"
-            + "h1 { color: #1a237e; font-size: 60px; margin-bottom: 10px; }"
-            + "h2 { font-weight: normal; font-size: 25px; margin-top: 0; }"
-            + ".name { color: #b8860b; font-size: 50px; font-weight: bold; margin: 20px 0; }"
-            + ".details { font-size: 22px; }"
+            + ".border { border: 15px double #1a237e; padding: 40px; background-color: white; height: 85%; }"
+            + "h1 { color: #1a237e; font-size: 60px; margin-bottom: 5px; }"
+            + "h2 { font-weight: bold; font-size: 30px; color: #b8860b; margin-top: 0; text-transform: uppercase; }"
+            + ".name { color: #1a237e; font-size: 55px; font-weight: bold; margin: 25px 0; border-bottom: 2px solid #b8860b; display: inline-block; padding: 0 50px; }"
+            + ".details { font-size: 24px; color: #333; }"
             + "</style></head><body>"
             + "<div class='border'>"
             + "<h1>CERTIFICATE</h1>"
-            + "<h2>OF COMPLETION</h2>"
-            + "<p class='details'>This is to officially certify that</p>"
+            + "<h2>Best Employee Award</h2>"
+            + "<p class='details'>This is to officially recognize and honor</p>"
             + "<div class='name'>" + name.toUpperCase() + "</div>"
-            + "<p class='details'>has successfully finished the task</p>"
-            + "<h3 style='font-size: 28px;'>" + task + "</h3>"
-            + "<p class='details'>Completed on: " + date + "</p>"
-            + "<br><br><p>__________________________<br>Admin Authorized Signature</p>"
+            + "<p class='details'>for exceptional performance and dedication in completing</p>"
+            + "<h3 style='font-size: 28px; color: #1a237e;'>" + task + "</h3>"
+            + "<p class='details'>Awarded on: " + date + "</p>"
+            + "<br><br><p style='font-size: 20px;'>__________________________<br><b>Admin Authorized Signature</b></p>"
             + "</div></body></html>";
 
     try {
+      
+        java.io.PrintWriter out = new java.io.PrintWriter(new java.io.FileWriter(htmlPath));
+        out.println(htmlContent);
+        out.close();
+
        
-        java.io.FileWriter fw = new java.io.FileWriter(htmlPath);
-        fw.write(htmlContent);
-        fw.close();
+        String[] possiblePaths = {
+            "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+            "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
+            "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+            "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+        };
+        
+        String enginePath = "";
+        for (String p : possiblePaths) {
+            if (new java.io.File(p).exists()) {
+                enginePath = p;
+                break;
+            }
+        }
 
-        String command = "cmd /c start chrome --headless --disable-gpu --print-to-pdf=\"" + pdfPath + "\" \"" + htmlPath + "\"";
-        Runtime.getRuntime().exec(command);
+       
+        if (!enginePath.isEmpty()) {
+            ProcessBuilder pb = new ProcessBuilder(
+                enginePath, "--headless", "--disable-gpu", 
+                "--print-to-pdf=" + pdfPath, htmlPath
+            );
+            Process process = pb.start();
+            
+           
+            process.waitFor(10, java.util.concurrent.TimeUnit.SECONDS);
 
-        javax.swing.JOptionPane.showMessageDialog(this, "Certificate generated on your Desktop!");
+            java.io.File pdfFile = new java.io.File(pdfPath);
+            if (pdfFile.exists()) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Award Certificate saved to Desktop!");
+                java.awt.Desktop.getDesktop().open(pdfFile);
+                new java.io.File(htmlPath).delete(); 
+            } else {
+                
+                java.awt.Desktop.getDesktop().browse(new java.io.File(htmlPath).toURI());
+                javax.swing.JOptionPane.showMessageDialog(this, "PDF Engine busy. Opened as Web Certificate.");
+            }
+        } else {
+           
+            java.awt.Desktop.getDesktop().browse(new java.io.File(htmlPath).toURI());
+        }
 
     } catch (Exception e) {
         javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());

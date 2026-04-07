@@ -17,18 +17,24 @@ public class taskCrud extends javax.swing.JFrame {
         displayData();
     }
 public void displayData() {
-        try {
-            config conf = new config();
-           
-            String query = "SELECT title, desc, status, deadline, assigned_to FROM tbl_tasks";
-            ResultSet rs = conf.getData(query);
-            
-            if (rs != null) {
-                taskTable.setModel(DbUtils.resultSetToTableModel(rs));
-            }
-        } catch (SQLException ex) {
-            System.out.println("Errors: " + ex.getMessage());
-        }
+      try {
+        config conf = new config();
+        
+      
+        String query = "SELECT title AS 'Task Title', "
+                     + "desc AS 'Description', "
+                     + "status AS 'Current Status', "
+                     + "deadline AS 'Due Date', "
+                     + "assigned_to AS 'Assignee ID' "
+                     + "FROM tbl_tasks "
+                     + "ORDER BY id DESC"; 
+        
+       
+        conf.displayData(query, taskTable);
+        
+    } catch (Exception ex) {
+        System.out.println("Errors: " + ex.getMessage());
+    }
     }
     
     @SuppressWarnings("unchecked")
@@ -204,7 +210,7 @@ public void displayData() {
                 .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(20, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -222,9 +228,7 @@ public void displayData() {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 10, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,37 +244,52 @@ public void displayData() {
     }//GEN-LAST:event_tx_titleActionPerformed
 
     private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        config conf = new config();
-    
-   
+       config conf = new config();
+
     String title = tx_title.getText();
     String desc  = tx_desc.getText();
     String dline = tx_dline.getText();
     String status = "Pending";
-    String assigned_to = tx_assto.getText();
-    
-   
-    if(title.trim().isEmpty() || dline.trim().isEmpty()){
-        javax.swing.JOptionPane.showMessageDialog(null, "Task Title and Deadline are required!");
-    } else {
-          
-        
-        
-        String sql = "INSERT INTO tbl_tasks (title, desc, status, deadline, assigned_to) "
-                   + "VALUES ('" + title + "', '" + desc + "', '" + status + "', '" + dline + "', '" +assigned_to + "')";
+    String assigned_user_id = tx_assto.getText(); 
 
-        
-        if(conf.insertData(sql) == 1) {
-            javax.swing.JOptionPane.showMessageDialog(null, "Task Scheduled Successfully!");
+   
+    String adminSessionID = "1"; 
+
+    if(title.trim().isEmpty() || dline.trim().isEmpty() || assigned_user_id.trim().isEmpty()){
+        javax.swing.JOptionPane.showMessageDialog(null, "All fields are required!");
+    } else {
+       
+        String sqlTask = "INSERT INTO tbl_tasks (title, desc, status, deadline) "
+                       + "VALUES ('" + title + "', '" + desc + "', '" + status + "', '" + dline + "')";
+
+        int newTaskID = conf.insertDataWithID(sqlTask); 
+
+        if(newTaskID > 0) {
+          
+            String sqlAssign = "INSERT INTO tbl_task_assignment (user_id, task_id, assigned_by) "
+                             + "VALUES ('" + assigned_user_id + "', '" + newTaskID + "', '" + adminSessionID + "')";
             
-            
-            taskForm tf = new taskForm();
-            tf.setVisible(true);
-            this.dispose();
+          
+            if(conf.insertData(sqlAssign) == 1) {
+                
+                conf.logEvent(adminSessionID, "TASK_CREATED", "Created Task: " + title);
+                
+                javax.swing.JOptionPane.showMessageDialog(null, "Task Added Successfully!");
+               
+                displayData(); 
+                
+                tx_title.setText("");
+                tx_desc.setText("");
+                tx_dline.setText("");
+                tx_assto.setText("");
+                
+            }
         } else {
-            javax.swing.JOptionPane.showMessageDialog(null, "Connection Error!");
+            javax.swing.JOptionPane.showMessageDialog(null, "Failed to create task. Check database connection.");
         }
+            
     }
+
     }//GEN-LAST:event_saveBtnActionPerformed
 
     private void tx_dlineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tx_dlineActionPerformed

@@ -159,22 +159,25 @@ try (Connection conn = config.connectDB();
             sess.setLname(lastName);  
            
             if (type.equalsIgnoreCase("Admin")) {
-                adminDashboard ad = new adminDashboard();
-                ad.setVisible(true);
-            } else {
-                userDashboard ud = new userDashboard(email);
-                
-                ud.sess_id = firstName + " " + lastName; 
-                ud.setVisible(true);
-            }
+    adminDashboard ad = new adminDashboard();
+    ad.setVisible(true);
+} else {
+    userDashboard ud = new userDashboard(email);
+    
+  
+    ud.sess_id = id; 
+    
+    ud.setVisible(true);
+}
             
             this.dispose();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "No user details found.");
+            }
         }
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
     }
-} catch (Exception e) {
-    JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-    e.printStackTrace();
-}
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
